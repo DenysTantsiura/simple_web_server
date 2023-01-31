@@ -29,7 +29,7 @@
                 <a class="nav-link active" aria-current="page" href="/">Home</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#">Send message</a>
+                <a class="nav-link" href="/message.html">Send message</a>
               </li>
             </ul>
           </div>
@@ -46,6 +46,11 @@
             <input type="text" class="form-control" id="floatingInput" name="username"/>
           </div>
 
+          <div class="row mb-3">
+            <label class=""> Your Email </label>
+            <input class="form-control" name="email" type="email" />
+          </div>
+
           <div class="row mb-3 h-100">
             <label for="floatingTextarea">Message</label>
             <textarea class="form-control" id="floatingTextarea" name="message"></textarea>
@@ -53,7 +58,7 @@
 
           <button class="w-100 btn btn-lg btn-primary" type="submit">
             Send
-          </button>
+          </button> <!--Браузер сформує дані та надішле їх нашому додатку. Він збирає дані з тегів input, textarea і т.д.-->
         </form>
       </main>
     </div>
