@@ -38,6 +38,7 @@ Socket сервер у різних потоках.
 """
 # У Python для роботи з сокетами використовується модуль socket:
 import socket
+import urllib.parse
 
 
 UDP_IP = '127.0.0.1'
@@ -66,9 +67,22 @@ def run_server(ip, port):
         while True:
             ## ///Socket сервер переводить отриманий байт-рядок у словник 
             ## ///і зберігає його в json файл data.json в папку storage.
-            data, address = sock.recvfrom(1024)  # отримуємо 1024 байта
+            data, address = sock.recvfrom(1024)  # отримуємо 1024??? байта
             print(f'Received data: {data.decode()} from: {address}')
-            
+            print(data)  # Це байт-рядок виду: b'username=krabaton&email=krabat%40test.com&message=Hello+my+friend' :
+            """"Для форми з enctype="application/x-www-form-urlencoded" пробіли повинні бути замінені на "+", 
+            а також браузер застосовує до рядка метод encodeURIComponent ."""
+            # Щоб повернути дані до початкового вигляду, нам треба застосувати метод urllib.parse.unquote_plus:
+            data_parse = urllib.parse.unquote_plus(data.decode())
+
+            # print(data_parse)  # username=krabaton&email=krabat@test.com&message=Hello my friend
+            # Після цього рядок можна перетворити на словник таким виразом:
+            data_dict = {key: value for key, value in [el.split('=') for el in data_parse.split('&')]}
+            print(data_dict)  # {'username': 'krabaton', 'email': 'krabat@test.com', 'message': 'Hello my friend'}
+            data_dict = prepare_data(data_dict)
+            save_data(data_dict)
+
+
             # sock.sendto(data, address) # ???? повернемо клієнту
             # print(f'Send data: {data.decode()} to: {address}')
 
@@ -78,6 +92,11 @@ def run_server(ip, port):
     finally:
         sock.close()
 
+def prepare_data():
+    ...
+
+def save_data(data_dict):
+    ...
 
 if __name__ == '__main__':
     run_server(UDP_IP, UDP_PORT)
