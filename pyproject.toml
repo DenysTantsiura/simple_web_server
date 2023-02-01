@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "simple-web-server"
+version = "0.1.0"
+description = ""
+authors = ["Denys Tantsiura <ghost0002501@gmail.com>"]
+readme = "README.md"
+packages = [{include = "simple_web_server"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+
+
+[tool.poetry.group.dev.dependencies]
+mypy = "^0.991"
+black = {extras = ["d"], version = "^22.12.0"}
+flake8 = "^6.0.0"
+
+[tool.black]
+line-length = 119
+skip-string-normalization = true
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
