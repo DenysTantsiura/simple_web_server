@@ -228,6 +228,10 @@ def prepare_data(data_dict: dict, path_of_file: pathlib.Path) -> dict:
 
 def save_data(data_dict: dict, path_of_file: pathlib.Path) -> None:
     """Save data_dict to file."""
+    path_data.mkdir(parents=True, exist_ok=True) if not path_data.exists() else None
+    if path_of_file.exists() and not data_dict:
+        return None
+
     try:
         with open(path_of_file, 'w') as fh:
             json.dump(data_dict, fh)
