@@ -1,0 +1,59 @@
+# Docker-команда FROM вказує базовий образ контейнера
+# Наш базовий образ - це Linux з попередньо встановленим python-3.10
+FROM python:3.10
+
+# if no requirements.txt (py8gr:M2L2:1h10m)
+ENV POETRY_VIRTUALENVS_CREATE=false
+
+# if poetry bug in Python3.6: https://github.com/python-poetry/poetry/issues/3412
+#ENV LC_ALL=C.UTF-8
+#ENV LANG=C.UTF-8
+#ENV LANGUAGE=C.UTF-8
+
+# Встановимо змінну середовища
+ENV APP_HOME /app
+
+# Встановимо робочу директорію усередині контейнера
+WORKDIR $APP_HOME
+
+RUN pip install poetry
+# && chmod +x /etc/poetry/bin/poetry
+
+COPY ["poetry.lock", "pyproject.toml", "$APP_HOME/"]  # Чому не зразу? Щоб не перероблювати всі шари при
+# новому білді, при зміні в програмі (середовище пілготовлене не чіпаємо)
+
+# for docker, no install virtual env., install from project.toml in system
+RUN poetry install --no-ansi --no-interaction
+
+# Скопіюємо інші файли до робочої директорії контейнера
+COPY . $APP_HOME
+
+# creates the directory if it doesn't exist, and updates some image metadata to specify all relative paths...
+WORKDIR storage
+
+WORKDIR $APP_HOME
+
+# VOLUME . /usr/src/app
+# When the RUN command finishes, changes to the image are saved, and changes to the anonymous volume are discarded!
+# inside docker-container:
+VOLUME storage
+# To specify where you want to include volumes with your image, provide a docker-compose.yml
+
+# Встановимо залежності усередині контейнера
+# RUN pip install -r requirements.txt
+# RUN poetry add $(cat requirements.txt)
+
+# Позначимо порт де працює програма всередині контейнера
+EXPOSE 3000
+
+# Запустимо нашу програму всередині контейнера
+# ENTRYPOINT ["python", "main.py"]
+#RUN poetry run py .\main.py
+CMD ["python", "main.py"]
+
+# Example to start:
+# docker run --volume=/host_folder:/usr/src/app my_image
+
+# sudo docker build . -t sws:latest
+# docker run -p 3000:3000 --volume=/media/denys/426AB6046D377CA7/prjs/simple_web_server/storage/:/app/storage sws
+
